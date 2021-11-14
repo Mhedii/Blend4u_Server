@@ -62,21 +62,33 @@ client.connect((err) => {
     // // //  my order
 
     app.get("/myOrder/:email", async (req, res) => {
-        console.log(req.params.email);
         const result = await ordersCollection
             .find({ email: req.params.email })
             .toArray();
+        console.log(result);
         res.send(result);
     });
-    //
-    // app.delete("/deleteOrders/:id", async (req, res) => {
-    //     const result = await ordersCollection.deleteOne({
-    //         _id: ObjectId(req.params.id),
-    //     });
-    //     res.send(result);
+
+    // cofirm order
+    app.post("/confirmBooking", async (req, res) => {
+        const result = await ordersCollection.insertOne(req.body);
+        res.send(result);
+    });
+    //Delete items
+    app.delete("/deleteOrders/:id", async (req, res) => {
+        const result = await ordersCollection.deleteOne({
+            _id: ObjectId(req.params.id),
+        });
+        res.send(result);
+    });
     // // // review
     app.post("/addSReview", async (req, res) => {
         const result = await reviewCollection.insertOne(req.body);
+        res.send(result);
+    });
+    //See Review
+    app.get("/seeReview", async (req, res) => {
+        const result = await reviewCollection.find({}).toArray();
         res.send(result);
     });
 
@@ -99,7 +111,7 @@ client.connect((err) => {
         }
         else {
             const role = "admin";
-            const result3 = await usersCollection.insertOne(req.body.email, {
+            const result = await usersCollection.insertOne(req.body.email, {
                 role: role,
             });
         }
@@ -134,6 +146,32 @@ client.connect((err) => {
         });
         res.send(result);
         console.log(result);
+    });
+    app.put("/updateStatus/:id", (req, res) => {
+        const id = req.params.id;
+        const updatedStatus = req.body.status;
+        const filter = { _id: ObjectId(id) };
+        console.log(updatedStatus);
+        ordersCollection
+            .updateOne(filter, {
+                $set: { status: updatedStatus },
+            })
+            .then((result) => {
+                res.send(result);
+            });
+    });
+    /// all product
+    app.get("/allProducts", async (req, res) => {
+        // console.log("hello");
+        const result = await servicesCollection.find({}).toArray();
+        res.send(result);
+    });
+    //Delete items
+    app.delete("/deleteProducts/:id", async (req, res) => {
+        const result = await servicesCollection.deleteOne({
+            _id: ObjectId(req.params.id),
+        });
+        res.send(result);
     });
 });
 
