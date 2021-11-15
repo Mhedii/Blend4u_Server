@@ -162,7 +162,7 @@ client.connect((err) => {
     });
     /// all product
     app.get("/allProducts", async (req, res) => {
-        // console.log("hello");
+
         const result = await servicesCollection.find({}).toArray();
         res.send(result);
     });
@@ -174,5 +174,8 @@ client.connect((err) => {
         res.send(result);
     });
 });
+app.get("/", (req, res) => {
+    // console.log("hello");
 
+});
 app.listen(process.env.PORT || port);
